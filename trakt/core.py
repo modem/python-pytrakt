@@ -364,7 +364,9 @@ auth_method = {
 
 def init(*args, **kwargs):
     """Run the auth function specified by *AUTH_METHOD*"""
-    return auth_method.get(AUTH_METHOD, PIN_AUTH)(*args, **kwargs)
+    from trakt.auth import init_auth
+
+    return init_auth(AUTH_METHOD, *args, **kwargs)
 
 
 @lru_cache(maxsize=None)
