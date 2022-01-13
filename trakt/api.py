@@ -1,13 +1,16 @@
 import json
 import logging
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from json import JSONDecodeError
 
 from requests import Session
+from requests.auth import AuthBase
 
 from trakt import errors
+from trakt.config import AuthConfig
 from trakt.core import TIMEOUT
-from trakt.errors import BadResponseException
+from trakt.errors import BadResponseException, OAuthException
 
 __author__ = 'Elan Ruusamäe'
 
@@ -89,3 +92,90 @@ class HttpClient:
                 if att != 'TraktException']
 
         return {err.http_code: err for err in errs}
+
+
+class TokenAuth(AuthBase):
+    """Attaches Trakt.tv token Authentication to the given Request object."""
+
+    #: The OAuth2 Redirect URI for your OAuth Application
+    REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
+
+    def __init__(self, client: HttpClient, config: AuthConfig):
+        super().__init__()
+        self.config = config
+        self.client = client
+        # OAuth token validity checked
+        self.OAUTH_TOKEN_VALID = None
+        self.logger = logging.getLogger('trakt.api.token_auth')
+
+    def __call__(self, r):
+        # Skip oauth requests
+        if r.path_url.startswith('/oauth/'):
+            return r
+
+        [client_id, client_token] = self.get_token()
+
+        r.headers.update({
+            'trakt-api-key': client_id,
+            'Authorization': f'Bearer {client_token}',
+        })
+        return r
+
+    def get_token(self):
+        """Return client_id, client_token pair needed for Trakt.tv authentication
+        """
+
+        self.config.load()
+        # Check token validity and refresh token if needed
+        if not self.OAUTH_TOKEN_VALID and self.config.have_refresh_token():
+            self.validate_token()
+
+        return [
+            self.config.CLIENT_ID,
+            self.config.OAUTH_TOKEN,
+        ]
+
+    def validate_token(self):
+        """Check if current OAuth token has not expired"""
+
+        current = datetime.now(tz=timezone.utc)
+        expires_at = datetime.fromtimestamp(self.config.OAUTH_EXPIRES_AT, tz=timezone.utc)
+        if expires_at - current > timedelta(days=2):
+            self.OAUTH_TOKEN_VALID = True
+        else:
+            self.refresh_token()
+
+    def refresh_token(self):
+        """Request Trakt API for a new valid OAuth token using refresh_token"""
+
+        self.logger.info("OAuth token has expired, refreshing now...")
+        data = {
+            'client_id': self.config.CLIENT_ID,
+            'client_secret': self.config.CLIENT_SECRET,
+            'refresh_token': self.config.OAUTH_REFRESH,
+            'redirect_uri': self.REDIRECT_URI,
+            'grant_type': 'refresh_token'
+        }
+
+        try:
+            response = self.client.post('/oauth/token', data)
+        except OAuthException:
+            self.logger.debug(
+                "Rejected - Unable to refresh expired OAuth token, "
+                "refresh_token is invalid"
+            )
+            return
+
+        self.config.update(
+            OAUTH_TOKEN=response.get("access_token"),
+            OAUTH_REFRESH=response.get("refresh_token"),
+            OAUTH_EXPIRES_AT=response.get("created_at") + response.get("expires_in"),
+        )
+        self.OAUTH_TOKEN_VALID = True
+
+        self.logger.info(
+            "OAuth token successfully refreshed, valid until {}".format(
+                datetime.fromtimestamp(self.config.OAUTH_EXPIRES_AT, tz=timezone.utc)
+            )
+        )
+        self.config.store()
