@@ -670,10 +670,22 @@ class Core:
         return inner
 
 
-# Here we can simplify the code in each module by exporting these instance
-# method decorators as if they were simple functions.
-CORE = Core()
-get = CORE.get
-post = CORE.post
-delete = CORE.delete
-put = CORE.put
+# Backward compat with 3.x
+def delete(f):
+    from trakt.decorators import delete
+    return delete(f)
+
+
+def get(f):
+    from trakt.decorators import get
+    return get(f)
+
+
+def post(f):
+    from trakt.decorators import post
+    return post(f)
+
+
+def put(f):
+    from trakt.decorators import put
+    return put(f)
