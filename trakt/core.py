@@ -8,7 +8,7 @@ import os
 import sys
 import time
 from datetime import datetime, timedelta, timezone
-from functools import wraps
+from functools import lru_cache, wraps
 from json import JSONDecodeError
 from typing import NamedTuple
 from urllib.parse import urljoin
@@ -364,6 +364,20 @@ auth_method = {
 def init(*args, **kwargs):
     """Run the auth function specified by *AUTH_METHOD*"""
     return auth_method.get(AUTH_METHOD, PIN_AUTH)(*args, **kwargs)
+
+
+@lru_cache(maxsize=None)
+def config():
+    from trakt.config import AuthConfig
+
+    return AuthConfig(CONFIG_PATH).update(
+        APPLICATION_ID=APPLICATION_ID,
+        CLIENT_ID=CLIENT_ID,
+        CLIENT_SECRET=CLIENT_SECRET,
+        OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,
+        OAUTH_REFRESH=OAUTH_REFRESH,
+        OAUTH_TOKEN=OAUTH_TOKEN,
+    )
 
 
 class Airs(NamedTuple):
