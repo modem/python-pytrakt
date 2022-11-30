@@ -2,7 +2,13 @@ name: Test
 
 on:
   pull_request:
+    paths-ignore:
+      - ".github/workflows/docs-build.yml"
+      - "docs/**"
   push:
+    paths-ignore:
+      - ".github/workflows/docs-build.yml"
+      - "docs/**"
     branches:
       - main
 
