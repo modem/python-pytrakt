@@ -179,7 +179,7 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False,
         PIN. Default function `_terminal_oauth_pin` for terminal auth
     :return: Your OAuth access token
     """
-    global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
+    global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_REFRESH, OAUTH_EXPIRES_AT
     if client_id is None and client_secret is None:
         client_id, client_secret = _get_client_info()
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
@@ -259,7 +259,7 @@ def get_device_token(device_code, client_id=None, client_secret=None,
     :return: Information regarding the authentication polling.
     :return type: dict
     """
-    global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_REFRESH
+    global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_REFRESH, OAUTH_EXPIRES_AT
     if client_id is None and client_secret is None:
         client_id, client_secret = _get_client_info()
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
