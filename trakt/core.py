@@ -381,6 +381,17 @@ def config():
     )
 
 
+@lru_cache(maxsize=None)
+def api():
+    from trakt.api import HttpClient, TokenAuth
+
+    client = HttpClient(BASE_URL, session)
+    auth = TokenAuth(client=client, config=config())
+    client.set_auth(auth)
+
+    return client
+
+
 class Airs(NamedTuple):
     day: str
     time: str
