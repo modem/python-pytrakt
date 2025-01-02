@@ -6,6 +6,7 @@ from json import JSONDecodeError
 from requests import Session
 
 from trakt import errors
+from trakt.core import TIMEOUT
 from trakt.errors import BadResponseException
 
 __author__ = 'Elan Ruusamäe'
@@ -18,10 +19,11 @@ class HttpClient:
     #: Default request HEADERS
     headers = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 
-    def __init__(self, base_url: str, session: Session):
+    def __init__(self, base_url: str, session: Session, timeout=None):
         self.base_url = base_url
         self.session = session
         self.auth = None
+        self.timeout = timeout or TIMEOUT
         self.logger = logging.getLogger('trakt.http_client')
 
     def get(self, url: str):
@@ -55,11 +57,10 @@ class HttpClient:
         url = self.base_url + url
         self.logger.debug('REQUEST [%s] (%s)', method, url)
         if method == 'get':  # GETs need to pass data as params, not body
-            response = self.session.request(method, url, headers=self.headers, auth=self.auth, params=data)
+            response = self.session.request(method, url, headers=self.headers, auth=self.auth, timeout=self.timeout, params=data)
         else:
-            response = self.session.request(method, url, headers=self.headers, auth=self.auth, data=json.dumps(data))
+            response = self.session.request(method, url, headers=self.headers, auth=self.auth, timeout=self.timeout, data=json.dumps(data))
         self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
-
         if response.status_code == 204:  # HTTP no content
             return None
         self.raise_if_needed(response)
