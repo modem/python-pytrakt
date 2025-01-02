@@ -11,7 +11,7 @@ import requests
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'get', 'delete', 'post', 'put',
            'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'DEVICE_AUTH',
-           'REDIRECT_URI', 'HEADERS', 'CONFIG_PATH', 'OAUTH_TOKEN',
+           'CONFIG_PATH', 'OAUTH_TOKEN',
            'OAUTH_REFRESH', 'PIN_AUTH', 'OAUTH_AUTH', 'AUTH_METHOD',
            'config', 'api',
            'TIMEOUT',
@@ -27,20 +27,11 @@ CLIENT_ID = None
 #: The Trakt.tv OAuth Client Secret for your OAuth Application
 CLIENT_SECRET = None
 
-#: The OAuth2 Redirect URI for your OAuth Application
-REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
-
-#: Default request HEADERS
-HEADERS = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
-
 #: Default path for where to store your trakt.tv API authentication information
 CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.pytrakt.json')
 
 #: Your personal Trakt.tv OAUTH Bearer Token
 OAUTH_TOKEN = None
-
-# OAuth token validity checked
-OAUTH_TOKEN_VALID = None
 
 # Your OAUTH token expiration date
 OAUTH_EXPIRES_AT = None
