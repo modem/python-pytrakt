@@ -2,22 +2,11 @@
 """Objects, properties, and methods to be shared across other modules in the
 trakt package
 """
-import json
-import logging
 import os
-import sys
-import time
-from datetime import datetime, timedelta, timezone
-from functools import lru_cache, wraps
-from json import JSONDecodeError
+from functools import lru_cache
 from typing import NamedTuple
-from urllib.parse import urljoin
 
 import requests
-from requests_oauthlib import OAuth2Session
-
-from trakt import errors
-from trakt.errors import BadResponseException
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'get', 'delete', 'post', 'put',
