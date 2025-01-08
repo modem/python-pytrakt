@@ -23,9 +23,9 @@ class HttpClient:
     headers = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 
     def __init__(self, base_url: str, session: Session, timeout=None):
+        self._auth = None
         self.base_url = base_url
         self.session = session
-        self.auth = None
         self.timeout = timeout or TIMEOUT
         self.logger = logging.getLogger('trakt.http_client')
 
@@ -43,6 +43,14 @@ class HttpClient:
 
     def set_auth(self, auth):
         self.auth = auth
+
+    @property
+    def auth(self):
+        return self._auth
+
+    @auth.setter
+    def auth(self, auth):
+        self._auth = auth
 
     def request(self, method, url, data=None):
         """Handle actually talking out to the trakt API, logging out debug
