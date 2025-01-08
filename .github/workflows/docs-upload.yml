@@ -50,9 +50,12 @@ jobs:
           cat trakt/__version__.py
           python -c "from trakt import __version__; print(__version__)"
 
-          # Install deps and build docs
-          pip install -r requirements.txt
-          sudo apt install sphinx
+          # Install deps
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install 'sphinx>=7.1.0'
+
+          # Build docs
           make docs
 
       - name: Setup Pages
