@@ -44,6 +44,8 @@ jobs:
 
       - name: Install dependencies and build docs
         run: |
+          set -eux
+
           # Setup version
           version=$(git describe --tags --abbrev=0)
           echo "__version__ = '$version'" | tee trakt/__version__.py
