@@ -46,8 +46,7 @@ jobs:
         run: |
           # Setup version
           version=$(git describe --tags --abbrev=0)
-          echo "__version__ = '$version'" > trakt/__version__.py
-          cat trakt/__version__.py
+          echo "__version__ = '$version'" | tee trakt/__version__.py
           python -c "from trakt import __version__; print(__version__)"
 
           # Install deps
