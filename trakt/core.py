@@ -93,7 +93,7 @@ def api():
     Notes:
         - Uses the global BASE_URL and session for creating the HTTP client
         - Configures the client with a TokenAuth instance using the current authentication configuration
-        - Cached function that returns a new client instance on each call
+        - Cached function that returns a same client instance on each call
     """
     from trakt.api import HttpClient, TokenAuth
 
