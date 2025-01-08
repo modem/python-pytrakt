@@ -23,6 +23,21 @@ class HttpClient:
     headers = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 
     def __init__(self, base_url: str, session: Session, timeout=None):
+        """
+        Initialize an HTTP client for making requests to a specified base URL.
+        
+        Parameters:
+            base_url (str): The base URL for API requests.
+            session (Session): A requests Session object for managing HTTP connections.
+            timeout (float, optional): Request timeout in seconds. Defaults to a predefined TIMEOUT value if not specified.
+        
+        Attributes:
+            _auth (object): Private attribute to store authentication mechanism.
+            base_url (str): Base URL for API endpoint.
+            session (Session): Requests session for connection management.
+            timeout (float): Request timeout duration.
+            logger (logging.Logger): Logger instance for tracking HTTP client activities.
+        """
         self._auth = None
         self.base_url = base_url
         self.session = session
@@ -30,6 +45,18 @@ class HttpClient:
         self.logger = logging.getLogger('trakt.http_client')
 
     def get(self, url: str):
+        """
+        Send a GET request to the specified URL.
+        
+        Parameters:
+            url (str): The endpoint URL to send the GET request to.
+        
+        Returns:
+            dict: The JSON-decoded response from the server.
+        
+        Raises:
+            Various exceptions from `raise_if_needed` based on HTTP status codes.
+        """
         return self.request('get', url)
 
     def delete(self, url: str):
@@ -39,27 +66,67 @@ class HttpClient:
         return self.request('post', url, data=data)
 
     def put(self, url: str, data):
+        """
+        Send a PUT request to the specified URL with the given data.
+        
+        Parameters:
+            url (str): The target URL for the PUT request.
+            data (dict, optional): The payload to be sent with the request.
+        
+        Returns:
+            dict: The JSON-decoded response from the server.
+        
+        Raises:
+            Various exceptions from `raise_if_needed` based on HTTP response status.
+        """
         return self.request('put', url, data=data)
 
     @property
     def auth(self):
+        """
+        Get the current authentication object for the HTTP client.
+        
+        Returns:
+            object: The authentication object associated with the HTTP client, which can be None or an authentication instance.
+        """
         return self._auth
 
     @auth.setter
     def auth(self, auth):
+        """
+        Set the authentication method for the HTTP client.
+        
+        Parameters:
+            auth (object): An authentication object to be used for API requests.
+                           Typically an instance of TokenAuth or a similar authentication class.
+        """
         self._auth = auth
 
     def request(self, method, url, data=None):
-        """Handle actually talking out to the trakt API, logging out debug
-        information, raising any relevant `TraktException` Exception types,
-        and extracting and returning JSON data
-
-        :param method: The HTTP method we're executing on. Will be one of
-            post, put, delete, get
-        :param url: The fully qualified url to send our request to
-        :param data: Optional data payload to send to the API
-        :return: The decoded JSON response from the Trakt API
-        :raises TraktException: If any non-200 return code is encountered
+        """
+        Send an HTTP request to the Trakt API and process the response.
+        
+        Sends a request to the specified URL using the given HTTP method, with optional data payload.
+        Handles different request types, logs request and response details, and processes the API response.
+        
+        Parameters:
+            method (str): HTTP method to use ('get', 'post', 'put', 'delete')
+            url (str): Relative URL path to send the request to
+            data (dict, optional): Payload to send with the request. Defaults to None.
+        
+        Returns:
+            dict or None: Decoded JSON response from the Trakt API, or None for 204 No Content responses
+        
+        Raises:
+            TraktException: If the API returns a non-200 status code
+            JSONDecodeError: If the response cannot be decoded as JSON
+        
+        Notes:
+            - For GET requests, data is passed as URL parameters
+            - For other methods, data is JSON-encoded in the request body
+            - Automatically prepends the base URL to the provided URL
+            - Logs debug information for request and response
+            - Handles authentication via the configured auth mechanism
         """
 
         url = self.base_url + url
