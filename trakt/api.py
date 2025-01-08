@@ -41,9 +41,6 @@ class HttpClient:
     def put(self, url: str, data):
         return self.request('put', url, data=data)
 
-    def set_auth(self, auth):
-        self.auth = auth
-
     @property
     def auth(self):
         return self._auth
