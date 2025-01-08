@@ -87,8 +87,7 @@ def api():
     from trakt.api import HttpClient, TokenAuth
 
     client = HttpClient(BASE_URL, session)
-    auth = TokenAuth(client=client, config=config())
-    client.set_auth(auth)
+    client.auth = TokenAuth(client=client, config=config())
 
     return client
 
