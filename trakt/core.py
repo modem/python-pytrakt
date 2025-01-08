@@ -84,11 +84,21 @@ def config():
 
 @lru_cache(maxsize=None)
 def api():
+    """
+    Create an HTTP client for interacting with the Trakt API using configured authentication.
+    
+    Returns:
+        HttpClient: A configured HTTP client with token-based authentication for making API requests.
+    
+    Notes:
+        - Uses the global BASE_URL and session for creating the HTTP client
+        - Configures the client with a TokenAuth instance using the current authentication configuration
+        - Cached function that returns a same client instance on each call
+    """
     from trakt.api import HttpClient, TokenAuth
 
     client = HttpClient(BASE_URL, session)
-    auth = TokenAuth(client=client, config=config())
-    client.set_auth(auth)
+    client.auth = TokenAuth(client=client, config=config())
 
     return client
 
