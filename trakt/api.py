@@ -230,7 +230,7 @@ class TokenAuth(AuthBase):
         }
 
         try:
-            response = self.client.post('/oauth/token', data)
+            response = self.client.post('oauth/token', data)
         except OAuthException:
             self.logger.debug(
                 "Rejected - Unable to refresh expired OAuth token, "
