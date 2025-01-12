@@ -172,12 +172,16 @@ class TokenAuth(AuthBase):
     #: The OAuth2 Redirect URI for your OAuth Application
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 
+    #: How many times to attempt token auth refresh before failing
+    MAX_RETRIES = 3
+
     def __init__(self, client: HttpClient, config: AuthConfig):
         super().__init__()
         self.config = config
         self.client = client
         # OAuth token validity checked
         self.OAUTH_TOKEN_VALID = None
+        self.refresh_attempts = 0
         self.logger = logging.getLogger('trakt.api.token_auth')
 
     def __call__(self, r):
@@ -220,6 +224,11 @@ class TokenAuth(AuthBase):
     def refresh_token(self):
         """Request Trakt API for a new valid OAuth token using refresh_token"""
 
+        if self.refresh_attempts >= self.MAX_RETRIES:
+            self.logger.error("Max token refresh attempts reached. Manual intervention required.")
+            return
+        self.refresh_attempts += 1
+
         self.logger.info("OAuth token has expired, refreshing now...")
         data = {
             'client_id': self.config.CLIENT_ID,
@@ -231,6 +240,7 @@ class TokenAuth(AuthBase):
 
         try:
             response = self.client.post('oauth/token', data)
+            self.refresh_attempts = 0
         except OAuthException:
             self.logger.debug(
                 "Rejected - Unable to refresh expired OAuth token, "
