@@ -2,6 +2,7 @@
 """Objects, properties, and methods to be shared across other modules in the
 trakt package
 """
+
 import os
 from functools import lru_cache
 from typing import NamedTuple
@@ -86,10 +87,10 @@ def config():
 def api():
     """
     Create an HTTP client for interacting with the Trakt API using configured authentication.
-    
+
     Returns:
         HttpClient: A configured HTTP client with token-based authentication for making API requests.
-    
+
     Notes:
         - Uses the global BASE_URL and session for creating the HTTP client
         - Configures the client with a TokenAuth instance using the current authentication configuration
@@ -136,19 +137,23 @@ class Comment(NamedTuple):
 # Backward compat with 3.x
 def delete(f):
     from trakt.decorators import delete
+
     return delete(f)
 
 
 def get(f):
     from trakt.decorators import get
+
     return get(f)
 
 
 def post(f):
     from trakt.decorators import post
+
     return post(f)
 
 
 def put(f):
     from trakt.decorators import put
+
     return put(f)
