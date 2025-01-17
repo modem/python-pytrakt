@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """This module contains Trakt.tv sync endpoint support functions"""
+
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -128,6 +129,7 @@ def add_to_watchlist(media):
     """
     from trakt.movies import Movie
     from trakt.tv import TVEpisode, TVSeason, TVShow
+
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:
@@ -146,6 +148,7 @@ def remove_from_history(media):
     """
     from trakt.movies import Movie
     from trakt.tv import TVEpisode, TVSeason, TVShow
+
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:
@@ -163,6 +166,7 @@ def remove_from_watchlist(media):
     """
     from trakt.movies import Movie
     from trakt.tv import TVEpisode, TVSeason, TVShow
+
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:
@@ -181,6 +185,7 @@ def add_to_collection(media):
     """
     from trakt.movies import Movie
     from trakt.tv import TVEpisode, TVSeason, TVShow
+
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:
@@ -198,6 +203,7 @@ def remove_from_collection(media):
     """
     from trakt.movies import Movie
     from trakt.tv import TVEpisode, TVSeason, TVShow
+
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:
@@ -258,18 +264,22 @@ def get_search_results(query, search_type=None, slugify_query=False):
         result = SearchResult(media_item['type'], media_item['score'])
         if media_item['type'] == 'movie':
             from trakt.movies import Movie
+
             result.media = Movie(**media_item.pop('movie'))
         elif media_item['type'] == 'show':
             from trakt.tv import TVShow
+
             result.media = TVShow(**media_item.pop('show'))
         elif media_item['type'] == 'episode':
             from trakt.tv import TVEpisode
+
             show = media_item.pop('show')
             result.media = TVEpisode(show.get('title', None),
                                      show_id=show['ids'].get('trakt'),
                                      **media_item.pop('episode'))
         elif media_item['type'] == 'person':
             from trakt.people import Person
+
             result.media = Person(**media_item.pop('person'))
         results.append(result)
 
@@ -327,18 +337,22 @@ def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
     for d in data:
         if 'episode' in d:
             from trakt.tv import TVEpisode
+
             show = d.pop('show')
             results.append(TVEpisode(show.get('title', None),
                                      show_id=show['ids'].get('trakt'),
                                      **d.pop('episode')))
         elif 'movie' in d:
             from trakt.movies import Movie
+
             results.append(Movie(**d.pop('movie')))
         elif 'show' in d:
             from trakt.tv import TVShow
+
             results.append(TVShow(**d.pop('show')))
         elif 'person' in d:
             from trakt.people import Person
+
             results.append(Person(**d.pop('person')))
     yield results
 
@@ -423,15 +437,18 @@ def get_watchlist(list_type=None, sort=None):
     for d in data:
         if 'episode' in d:
             from trakt.tv import TVEpisode
+
             show = d.pop('show')
             results.append(TVEpisode(show.get('title', None),
                                      show_id=show.get('trakt', None),
                                      **d['episode']))
         elif 'movie' in d:
             from trakt.movies import Movie
+
             results.append(Movie(**d.pop('movie')))
         elif 'show' in d:
             from trakt.tv import TVShow
+
             results.append(TVShow(**d.pop('show')))
 
     yield results
@@ -464,9 +481,11 @@ def get_watched(list_type=None, extended=None):
     for d in data:
         if 'movie' in d:
             from trakt.movies import Movie
+
             results.append(Movie(**d.pop('movie')))
         elif 'show' in d:
             from trakt.tv import TVShow
+
             results.append(TVShow(**d.pop('show')))
 
     yield results
@@ -501,9 +520,11 @@ def get_collection(list_type=None, extended=None):
     for d in data:
         if 'movie' in d:
             from trakt.movies import Movie
+
             results.append(Movie(**d.pop('movie')))
         elif 'show' in d:
             from trakt.tv import TVShow
+
             results.append(TVShow(**d.pop('show')))
 
     yield results
@@ -611,6 +632,7 @@ class SearchResult:
     API. It wraps a single media entity whose type is indicated by the type
     field.
     """
+
     def __init__(self, type, score, media=None):
         """Create a new :class:`SearchResult` instance
 
