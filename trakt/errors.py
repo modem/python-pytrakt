@@ -143,6 +143,12 @@ class RateLimitException(TraktException):
             return None
 
 
+class AccountLimitExceeded(RateLimitException):
+    """TraktException type to be raised when a 420 return code is received"""
+    http_code = 420
+    message = 'Account Limit Exceeded - list count, item count, etc'
+
+
 class TraktInternalException(TraktException):
     """TraktException type to be raised when a 500 error is raised"""
 
