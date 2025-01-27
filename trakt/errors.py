@@ -149,6 +149,10 @@ class AccountLimitExceeded(RateLimitException):
     http_code = 420
     message = 'Account Limit Exceeded - list count, item count, etc'
 
+    @property
+    def account_limit(self):
+        return self.response.headers.get("x-account-limit")
+
 
 class TraktInternalException(TraktException):
     """TraktException type to be raised when a 500 error is raised"""
