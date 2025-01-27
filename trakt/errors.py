@@ -15,6 +15,7 @@ __all__ = [
 
     # Exceptions by HTTP status code
     # https://trakt.docs.apiary.io/#introduction/status-codes
+    'AccountLimitExceeded',
     'BadRequestException',
     'OAuthException',
     'ForbiddenException',
