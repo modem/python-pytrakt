@@ -175,6 +175,8 @@ class TokenAuth(AuthBase):
     #: How many times to attempt token auth refresh before failing
     MAX_RETRIES = 1
 
+    logger = logging.getLogger(__name__)
+
     def __init__(self, client: HttpClient, config: AuthConfig):
         super().__init__()
         self.config = config
@@ -182,7 +184,6 @@ class TokenAuth(AuthBase):
         # OAuth token validity checked
         self.OAUTH_TOKEN_VALID = None
         self.refresh_attempts = 0
-        self.logger = logging.getLogger('trakt.api.token_auth')
 
     def __call__(self, r):
         # Skip oauth requests
