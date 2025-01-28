@@ -151,7 +151,12 @@ class AccountLimitExceeded(RateLimitException):
 
     @property
     def account_limit(self):
-        return self.response.headers.get("x-account-limit")
+        """Get the account limit details from response headers.
+
+        Returns:
+            str|None: The value of x-account-limit header or None if not present
+        """
+        return self.response.headers.get("x-account-limit", None)
 
 
 class TraktInternalException(TraktException):
