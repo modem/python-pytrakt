@@ -191,10 +191,14 @@ class TokenAuth(AuthBase):
 
         [client_id, client_token] = self.get_token()
 
-        r.headers.update({
-            'trakt-api-key': client_id,
-            'Authorization': f'Bearer {client_token}',
-        })
+        if client_id and client_token:
+            r.headers.update({
+                'trakt-api-key': client_id,
+                'Authorization': f'Bearer {client_token}',
+            })
+        else:
+            self.logger.debug("Skipping auth headers: missing credentials")
+
         return r
 
     def get_token(self):
