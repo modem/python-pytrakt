@@ -191,10 +191,12 @@ class TokenAuth(AuthBase):
 
         [client_id, client_token] = self.get_token()
 
-        r.headers.update({
-            'trakt-api-key': client_id,
-            'Authorization': f'Bearer {client_token}',
-        })
+        if client_id and client_token:
+            r.headers.update({
+                'trakt-api-key': client_id,
+                'Authorization': f'Bearer {client_token}',
+            })
+
         return r
 
     def get_token(self):
