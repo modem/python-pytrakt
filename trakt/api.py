@@ -19,6 +19,8 @@ class HttpClient:
     """Class for abstracting HTTP requests
     """
 
+    logger = logging.getLogger(__name__)
+
     #: Default request HEADERS
     headers = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 
@@ -42,7 +44,6 @@ class HttpClient:
         self.base_url = base_url
         self.session = session
         self.timeout = timeout or TIMEOUT
-        self.logger = logging.getLogger('trakt.http_client')
 
     def get(self, url: str):
         """
