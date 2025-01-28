@@ -196,6 +196,8 @@ class TokenAuth(AuthBase):
                 'trakt-api-key': client_id,
                 'Authorization': f'Bearer {client_token}',
             })
+        else:
+            self.logger.debug("Skipping auth headers: missing credentials")
 
         return r
 
