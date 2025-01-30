@@ -11,7 +11,7 @@ with open('HISTORY.rst') as f:
 with open('requirements.txt') as f:
     requires = [line.strip() for line in f if line.strip()]
 
-packages = ['trakt']
+packages = ['trakt', 'trakt.auth']
 description = ('Pythonic abstraction layer for easier scripting of the '
                'Trakt.tv REST API.')
 
