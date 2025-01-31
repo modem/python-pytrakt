@@ -6,8 +6,6 @@ __author__ = 'Elan Ruusamäe, Jon Nappi'
 
 with open('README.rst') as f:
     readme = f.read()
-with open('HISTORY.rst') as f:
-    history = f.read()
 with open('requirements.txt') as f:
     requires = [line.strip() for line in f if line.strip()]
 
@@ -19,7 +17,7 @@ setup(
     name='pytrakt',
     version=trakt.__version__,
     description=description,
-    long_description='\n'.join([readme, history]),
+    long_description=readme,
     author='Elan Ruusamäe',
     author_email='glen@pld-linux.org',
     url='https://github.com/glensc/python-pytrakt',
