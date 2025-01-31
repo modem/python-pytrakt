@@ -15,6 +15,7 @@ __all__ = [
 
     # Exceptions by HTTP status code
     # https://trakt.docs.apiary.io/#introduction/status-codes
+    'AccountLimitExceeded',
     'BadRequestException',
     'OAuthException',
     'ForbiddenException',
@@ -141,6 +142,21 @@ class RateLimitException(TraktException):
             return loads(self.response.headers.get("x-ratelimit", ""))
         except JSONDecodeError:
             return None
+
+
+class AccountLimitExceeded(RateLimitException):
+    """TraktException type to be raised when a 420 return code is received"""
+    http_code = 420
+    message = 'Account Limit Exceeded - list count, item count, etc'
+
+    @property
+    def account_limit(self):
+        """Get the account limit details from response headers.
+
+        Returns:
+            str|None: The value of x-account-limit header or None if not present
+        """
+        return self.response.headers.get("x-account-limit", None)
 
 
 class TraktInternalException(TraktException):
