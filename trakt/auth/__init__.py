@@ -3,9 +3,9 @@
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
-from trakt import DEVICE_AUTH, OAUTH_AUTH, PIN_AUTH, api
-from trakt import config as config_factory
 from trakt.config import AuthConfig
+from trakt.core import DEVICE_AUTH, OAUTH_AUTH, PIN_AUTH, api
+from trakt.core import config as config_factory
 
 
 def pin_auth(*args, config, **kwargs):
