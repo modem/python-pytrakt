@@ -19,6 +19,8 @@ class HttpClient:
     """Class for abstracting HTTP requests
     """
 
+    logger = logging.getLogger(__name__)
+
     #: Default request HEADERS
     headers = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 
@@ -42,7 +44,6 @@ class HttpClient:
         self.base_url = base_url
         self.session = session
         self.timeout = timeout or TIMEOUT
-        self.logger = logging.getLogger('trakt.http_client')
 
     def get(self, url: str):
         """
@@ -175,6 +176,8 @@ class TokenAuth(AuthBase):
     #: How many times to attempt token auth refresh before failing
     MAX_RETRIES = 1
 
+    logger = logging.getLogger(__name__)
+
     def __init__(self, client: HttpClient, config: AuthConfig):
         super().__init__()
         self.config = config
@@ -182,7 +185,6 @@ class TokenAuth(AuthBase):
         # OAuth token validity checked
         self.OAUTH_TOKEN_VALID = None
         self.refresh_attempts = 0
-        self.logger = logging.getLogger('trakt.api.token_auth')
 
     def __call__(self, r):
         # Skip oauth requests
