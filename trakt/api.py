@@ -32,13 +32,6 @@ class HttpClient:
             base_url (str): The base URL for API requests.
             session (Session): A requests Session object for managing HTTP connections.
             timeout (float, optional): Request timeout in seconds. Defaults to a predefined TIMEOUT value if not specified.
-
-        Attributes:
-            _auth (object): Private attribute to store authentication mechanism.
-            base_url (str): Base URL for API endpoint.
-            session (Session): Requests session for connection management.
-            timeout (float): Request timeout duration.
-            logger (logging.Logger): Logger instance for tracking HTTP client activities.
         """
         self._auth = None
         self.base_url = base_url
