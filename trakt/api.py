@@ -214,7 +214,7 @@ class TokenAuth(AuthBase):
 
         current = datetime.now(tz=timezone.utc)
         expires_at = datetime.fromtimestamp(self.config.OAUTH_EXPIRES_AT, tz=timezone.utc)
-        if expires_at - current > timedelta(days=2):
+        if expires_at - current > timedelta(minutes=10):
             self.OAUTH_TOKEN_VALID = True
         else:
             self.refresh_token()
