@@ -169,7 +169,7 @@ class TokenAuth(AuthBase):
     MAX_RETRIES = 1
 
     # Time margin before token expiry when refresh should be triggered
-    TOKEN_REFRESH_MARGIN = timedelta(minutes=10)
+    TOKEN_REFRESH_MARGIN = {'minutes': 10}
 
     logger = logging.getLogger(__name__)
 
@@ -223,7 +223,7 @@ class TokenAuth(AuthBase):
         current = datetime.now(tz=timezone.utc)
         expires_at = datetime.fromtimestamp(self.config.OAUTH_EXPIRES_AT, tz=timezone.utc)
         margin = expires_at - current
-        if margin > self.TOKEN_REFRESH_MARGIN:
+        if margin > timedelta(**self.TOKEN_REFRESH_MARGIN):
             self.OAUTH_TOKEN_VALID = True
         else:
             self.logger.debug("Token expires in %s, refreshing (margin: %s)", margin, self.TOKEN_REFRESH_MARGIN)
