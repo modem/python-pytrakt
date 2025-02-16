@@ -213,7 +213,12 @@ class TokenAuth(AuthBase):
         ]
 
     def validate_token(self):
-        """Check if current OAuth token has not expired"""
+        """Check if current OAuth token has not expired
+
+        The token is considered valid if it expires in more than TOKEN_REFRESH_MARGIN
+        (default: 10 minutes). This margin ensures the token doesn't expire during
+        critical operations while also maximizing the token's useful lifetime.
+        """
 
         current = datetime.now(tz=timezone.utc)
         expires_at = datetime.fromtimestamp(self.config.OAUTH_EXPIRES_AT, tz=timezone.utc)
