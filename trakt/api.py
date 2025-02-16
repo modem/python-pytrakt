@@ -168,6 +168,9 @@ class TokenAuth(AuthBase):
     #: How many times to attempt token auth refresh before failing
     MAX_RETRIES = 1
 
+    # Time margin before token expiry when refresh should be triggered
+    TOKEN_REFRESH_MARGIN = timedelta(minutes=10)
+
     logger = logging.getLogger(__name__)
 
     def __init__(self, client: HttpClient, config: AuthConfig):
@@ -214,7 +217,8 @@ class TokenAuth(AuthBase):
 
         current = datetime.now(tz=timezone.utc)
         expires_at = datetime.fromtimestamp(self.config.OAUTH_EXPIRES_AT, tz=timezone.utc)
-        if expires_at - current > timedelta(minutes=10):
+        margin = expires_at - current
+        if margin > self.TOKEN_REFRESH_MARGIN:
             self.OAUTH_TOKEN_VALID = True
         else:
             self.refresh_token()
