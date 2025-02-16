@@ -226,6 +226,7 @@ class TokenAuth(AuthBase):
         if margin > self.TOKEN_REFRESH_MARGIN:
             self.OAUTH_TOKEN_VALID = True
         else:
+            self.logger.debug("Token expires in %s, refreshing (margin: %s)", margin, self.TOKEN_REFRESH_MARGIN)
             self.refresh_token()
 
     def refresh_token(self):
