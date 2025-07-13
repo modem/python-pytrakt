@@ -253,8 +253,8 @@ class TokenAuth(AuthBase):
             error = e.response.json().get("error") if e.response is not None else "No error description"
             error_description = e.response.json().get("error_description") if e.response is not None else ""
             self.logger.error(
-                "{} - Unable to refresh expired OAuth token ".format(e.http_code) +
-                "({}) {}".format(error, error_description)
+                "%s - Unable to refresh expired OAuth token (%s) %s",
+                e.http_code, error, error_description
             )
             return
 
