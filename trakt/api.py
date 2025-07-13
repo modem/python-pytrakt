@@ -10,7 +10,7 @@ from requests.auth import AuthBase
 from trakt import errors
 from trakt.config import AuthConfig
 from trakt.core import TIMEOUT
-from trakt.errors import BadResponseException, OAuthException
+from trakt.errors import BadRequestException, BadResponseException, OAuthException
 
 __author__ = 'Elan Ruusamäe'
 
@@ -249,10 +249,12 @@ class TokenAuth(AuthBase):
         try:
             response = self.client.post('oauth/token', data)
             self.refresh_attempts = 0
-        except OAuthException:
-            self.logger.debug(
-                "Rejected - Unable to refresh expired OAuth token, "
-                "refresh_token is invalid"
+        except (OAuthException, BadRequestException) as e:
+            error = e.response.json().get("error") if e.response is not None else "No error description"
+            error_description = e.response.json().get("error_description") if e.response is not None else ""
+            self.logger.error(
+                "{} - Unable to refresh expired OAuth token ".format(e.http_code) +
+                "({}) {}".format(error, error_description)
             )
             return
 
