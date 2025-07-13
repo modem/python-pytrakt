@@ -250,8 +250,16 @@ class TokenAuth(AuthBase):
             response = self.client.post('oauth/token', data)
             self.refresh_attempts = 0
         except (OAuthException, BadRequestException) as e:
-            error = e.response.json().get("error") if e.response is not None else "No error description"
-            error_description = e.response.json().get("error_description") if e.response is not None else ""
+            if e.response is not None:
+                try:
+                    error = e.response.json().get("error")
+                    error_description = e.response.json().get("error_description")
+                except JSONDecodeError:
+                    error = "Invalid JSON response"
+                    error_description = e.response.text
+            else:
+                error = "No error description"
+                error_description = ""
             self.logger.error(
                 "%s - Unable to refresh expired OAuth token (%s) %s",
                 e.http_code, error, error_description
